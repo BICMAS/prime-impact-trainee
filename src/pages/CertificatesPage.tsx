@@ -24,7 +24,7 @@ export default function CertificatesPage() {
   );
   const [pageMessage, setPageMessage] = useState<string>("");
   const [certificateIssuedState, setCertificateIssuedState] = useState<
-    Record<string, "issued_now" | "already_issued">
+    Record<string, "issued_now" | "already_issued" | "reissued">
   >({});
 
   const allCourses = libraryCourses.length ? libraryCourses : dashboardCourses;
@@ -42,10 +42,15 @@ export default function CertificatesPage() {
 
     try {
       const claimed = await claimMyCourseCertificate(course.id);
-      const certificateUrl = claimed?.certificate?.pdfPath ?? course.certificateUrl;
+      const certificateUrl =
+        claimed?.certificate?.certificateUrl ?? claimed?.certificate?.pdfPath;
       setCertificateIssuedState((prev) => ({
         ...prev,
-        [course.id]: claimed?.issued ? "issued_now" : "already_issued",
+        [course.id]: claimed?.reissued
+          ? "reissued"
+          : claimed?.issued
+            ? "issued_now"
+            : "already_issued",
       }));
 
       setSelectedCertificate({
@@ -53,9 +58,8 @@ export default function CertificatesPage() {
         certificateUrl,
       });
     } catch (error: any) {
-      // Keep UX functional: modal can still generate fallback PDF if URL is missing.
       setPageMessage(error?.message || "Certificate is not ready yet.");
-      setSelectedCertificate(course);
+      setSelectedCertificate(null);
     } finally {
       setIsPreparingCertificate(null);
     }
@@ -130,13 +134,18 @@ export default function CertificatesPage() {
                     <p className="mt-2 text-sm text-slate-500">
                       {course.description}
                     </p>
+                    {certificateIssuedState[course.id] === "reissued" && (
+                      <p className="mt-2 text-xs font-medium text-amber-700">
+                        Updated with the latest certificate template
+                      </p>
+                    )}
                     {certificateIssuedState[course.id] === "issued_now" && (
                       <p className="mt-2 text-xs font-medium text-emerald-700">
                         Issued now
                       </p>
                     )}
                     {certificateIssuedState[course.id] === "already_issued" && (
-                      <p className="mt-2 text-xs font-medium text-blue-700">
+                      <p className="mt-2 text-xs font-medium text-brand-primary">
                         Already issued
                       </p>
                     )}
@@ -147,7 +156,7 @@ export default function CertificatesPage() {
                   type="button"
                   onClick={() => openCertificate(course)}
                   disabled={isPreparingCertificate === course.id}
-                  className="mt-6 inline-flex items-center gap-2 rounded-xl bg-[#008080] px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#006d6d] disabled:cursor-not-allowed disabled:bg-[#008080]/60"
+                  className="mt-6 inline-flex items-center gap-2 rounded-xl bg-brand-primary px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-primary-dark disabled:cursor-not-allowed disabled:bg-brand-primary/60"
                 >
                   <Download size={16} />
                   {isPreparingCertificate === course.id
@@ -164,6 +173,7 @@ export default function CertificatesPage() {
         isOpen={!!selectedCertificate}
         onClose={handleCloseModal}
         onConfirm={handleCloseModal}
+        courseId={selectedCertificate?.id}
         courseTitle={selectedCertificate?.title ?? ""}
         recipientName={user.name}
         certificateUrl={selectedCertificate?.certificateUrl}

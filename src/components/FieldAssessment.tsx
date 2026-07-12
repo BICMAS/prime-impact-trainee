@@ -188,7 +188,7 @@ export const FieldAssessmentPage: React.FC = () => {
         <button
           onClick={handleSubmit}
           disabled={loading}
-          className="px-4 py-2 bg-[#008080] text-white rounded-lg"
+          className="px-4 py-2 bg-brand-accent hover:bg-brand-accent-dark text-white rounded-lg transition-colors"
         >
           {loading ? "Submitting..." : "Submit Assessment"}
         </button>

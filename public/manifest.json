@@ -1,11 +1,11 @@
 {
-  "name": "BICMAS Academy",
-  "short_name": "BICMAS",
+  "name": "Prime Impact",
+  "short_name": "Prime Impact",
   "description": "Offline-capable trainee learning platform",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#f8fafc",
-  "theme_color": "#008080",
+  "theme_color": "#4f1073",
   "orientation": "portrait-primary",
   "icons": [
     {

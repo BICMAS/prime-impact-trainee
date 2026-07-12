@@ -8,7 +8,7 @@ export default function NotFoundPage() {
         <p className="text-slate-600 mb-6">Sorry, we couldn't find the page you were looking for.</p>
         <Link
           to="/"
-          className="inline-flex items-center justify-center px-5 py-3 bg-[#008080] text-white rounded-xl hover:bg-[#006d6d]"
+          className="inline-flex items-center justify-center px-5 py-3 bg-brand-primary text-white rounded-xl hover:bg-brand-primary-dark transition-colors"
         >
           Back to dashboard
         </Link>

@@ -1,4 +1,4 @@
-const CACHE_NAME = "bicmas-app-v4";
+const CACHE_NAME = "prime-impact-app-v1";
 
 /* ---------------- INSTALL ---------------- */
 self.addEventListener("install", (event) => {
@@ -29,18 +29,18 @@ self.addEventListener("push", (event) => {
     data = event.data ? event.data.json() : {};
   } catch {
     data = {
-      title: "BICMAS Announcement",
+      title: "Prime Impact Announcement",
       body: event.data?.text(),
     };
   }
 
-  const title = data.title || "BICMAS Announcement";
+  const title = data.title || "Prime Impact Announcement";
 
   const options = {
     body: data.body || "New announcement available",
-    icon: "/logo.png",
-    badge: "/logo.png",
-    tag: "bicmas-announcement",
+    icon: "/img/prime-impact-logo.png",
+    badge: "/img/prime-impact-logo.png",
+    tag: "prime-impact-announcement",
     data: {
       url: data.url || "/",
     },

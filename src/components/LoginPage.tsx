@@ -66,14 +66,13 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl border border-slate-100">
         {/* Header */}
-        <div className="bg-[#008080] p-8 text-center">
+        <div className="bg-white p-8 text-center border-b border-slate-100">
           <img
-            src="/img/BICMAS-logo.png"
-            className="w-16 h-16 mx-auto mb-4"
-            alt="BICMAS"
+            src="/img/prime-impact-logo.png"
+            className="h-24 mx-auto mb-4 object-contain"
+            alt="Prime Impact"
           />
-          <h1 className="text-2xl font-bold text-white">BICMAS Academy</h1>
-          <p className="text-blue-100 mt-2">Trainee Learning Portal</p>
+          <p className="text-slate-500 mt-2">Trainee Learning Portal</p>
         </div>
 
         <div className="p-8 space-y-6">
@@ -104,7 +103,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
           </div>
 
           <form
-            id="bicmas-login-form"
+            id="prime-impact-login-form"
             name="login"
             method="post"
             autoComplete="on"
@@ -141,7 +140,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                     onChange={(e) => setEmail(e.target.value)}
                     required
                     placeholder="Enter your email"
-                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500"
+                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-brand-primary"
                   />
                 </div>
               </div>
@@ -168,7 +167,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                     onChange={(e) => setPhoneNumber(e.target.value)}
                     required
                     placeholder="123-456-7890"
-                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500"
+                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-brand-primary"
                   />
                 </div>
               </div>
@@ -196,7 +195,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   required
-                  className="w-full pl-10 pr-12 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500"
+                  className="w-full pl-10 pr-12 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-brand-primary"
                 />
                 <button 
                   type="button"
@@ -213,7 +212,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-[#008080] text-white py-3 rounded-xl font-semibold flex items-center justify-center gap-2 disabled:opacity-70"
+              className="w-full bg-brand-accent hover:bg-brand-accent-dark text-white py-3 rounded-xl font-semibold flex items-center justify-center gap-2 disabled:opacity-70 transition-colors"
             >
               {isLoading ? 'Signing in…' : 'Sign In'}
               {!isLoading && <ArrowRight size={18} />}

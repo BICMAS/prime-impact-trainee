@@ -42,11 +42,11 @@ export const showAnnouncementNotification = async (message: string) => {
       !("serviceWorker" in navigator)
     ) {
       // Fallback to plain Notifications API if no SW is available
-      new Notification("BICMAS Announcement", {
+      new Notification("Prime Impact Announcement", {
         body: message,
-        icon: "/logo.png",
-        badge: "/logo.png",
-        tag: "bicmas-announcement",
+        icon: "/img/prime-impact-logo.png",
+        badge: "/img/prime-impact-logo.png",
+        tag: "prime-impact-announcement",
       });
       return;
     }
@@ -54,20 +54,20 @@ export const showAnnouncementNotification = async (message: string) => {
     const registration = await navigator.serviceWorker.getRegistration();
     if (!registration) {
       // No active service worker registration
-      new Notification("BICMAS Announcement", {
+      new Notification("Prime Impact Announcement", {
         body: message,
-        icon: "/logo.png",
-        badge: "/logo.png",
-        tag: "bicmas-announcement",
+        icon: "/img/prime-impact-logo.png",
+        badge: "/img/prime-impact-logo.png",
+        tag: "prime-impact-announcement",
       });
       return;
     }
 
-    await registration.showNotification("BICMAS Announcement", {
+    await registration.showNotification("Prime Impact Announcement", {
       body: message,
-      icon: "/logo.png",
-      badge: "/logo.png",
-      tag: "bicmas-announcement",
+      icon: "/img/prime-impact-logo.png",
+      badge: "/img/prime-impact-logo.png",
+      tag: "prime-impact-announcement",
     });
   } catch (error) {
     console.error("Failed to show announcement notification", error);

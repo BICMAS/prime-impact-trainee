@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { X, Download, Linkedin, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
-import { jsPDF } from 'jspdf';
+import { downloadMyCourseCertificate, saveCertificateBlob } from '@/api/certificates';
 
 interface CertificateModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
+  courseId?: string;
   courseTitle: string;
   recipientName: string;
   certificateUrl?: string;
@@ -13,21 +14,12 @@ interface CertificateModalProps {
 
 type CertificateStatus = 'idle' | 'processing' | 'success' | 'error';
 
-interface FitTextOptions {
- maxWidth: number;
-  initialFontSize: number;
-  minFontSize: number;
-  fontName: string;
-  fontStyle: 'normal' | 'bold' | 'italic' | 'bolditalic';
-  color: [number, number, number];
-}
-
 export const CertificateModal: React.FC<CertificateModalProps> = ({
 isOpen,
 onClose,
 onConfirm,
+courseId,
 courseTitle,
-recipientName,
 certificateUrl
 }) => {
   const [status, setStatus] = useState<CertificateStatus>('idle');
@@ -79,17 +71,10 @@ certificateUrl
   };
 
  const handleLinkedInShare = () => {
-    const text = `I just successfully completed the "${courseTitle}" course at BICMAS Academy! #Learning #ProfessionalDevelopment #BICMAS`;
+    const text = `I just successfully completed the "${courseTitle}" course at Prime Impact! #Learning #ProfessionalDevelopment #PrimeImpact`;
     const url = `https://www.linkedin.com/feed/?shareActive=true&text=${encodeURIComponent(text)}`;
     window.open(url, '_blank', 'noopener,noreferrer,width=600,height=600');
   };
-
-  const formatCertificateDate = () =>
-   new Intl.DateTimeFormat('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    }).format(new Date());
 
   const sanitizeFileName = (value: string) => {
     const sanitized = value
@@ -101,135 +86,14 @@ certificateUrl
    return sanitized || 'certificate';
   };
 
- const fitCenteredText = (
-    doc: jsPDF,
-    text: string,
-   y: number,
-   options: FitTextOptions
-  ) => {
-    const { maxWidth, initialFontSize, minFontSize, fontName, fontStyle, color } = options;
-   let fontSize = initialFontSize;
-
-    doc.setFont(fontName, fontStyle);
-    doc.setFontSize(fontSize);
-
-    let lines = doc.splitTextToSize(text, maxWidth) as string[];
-    doc.setFontSize(fontSize);
-    doc.setTextColor(...color);
-    doc.text(lines, doc.internal.pageSize.getWidth() / 2, y, {
-      align: 'center',
-      baseline: 'middle'
-    });
-  };
-
-  const generatePDF = (): boolean => {
-    try {
-      const doc = new jsPDF({
-        orientation: 'landscape',
-        unit: 'mm',
-        format: 'a4'
-      });
-
-      const width = doc.internal.pageSize.getWidth();
-      const height = doc.internal.pageSize.getHeight();
-
-      doc.setFillColor(255, 255, 255);
-      doc.rect(0, 0, width, height, 'F');
-
-      doc.setDrawColor(37, 99, 235);
-     doc.setLineWidth(1.5);
-      doc.rect(10, 10, width - 20, height - 20);
-
-     doc.setDrawColor(203, 213, 225);
-      doc.setLineWidth(0.5);
-      doc.rect(12, 12, width - 24, height - 24);
-
-     doc.setTextColor(30, 41, 59);
-     doc.setFont('helvetica', 'bold');
-     doc.setFontSize(36);
-     doc.text('CERTIFICATE', width / 2, 50, { align: 'center' });
-
-      doc.setFontSize(14);
-      doc.setFont('helvetica', 'normal');
-     doc.setCharSpace(2);
-      doc.text('OF COMPLETION', width / 2, 60, { align: 'center' });
-
-     doc.setFontSize(16);
-     doc.setTextColor(100, 116, 139);
-     doc.setCharSpace(0);
-      doc.text('This certificate is proudly presented to', width / 2, 85, { align: 'center' });
-
-     fitCenteredText(doc, recipientName, 103, {
-       maxWidth: width - 70,
-        initialFontSize: 32,
-        minFontSize: 20,
-        fontName: 'times',
-        fontStyle: 'italic',
-        color: [30, 41, 59]
-     });
-
-      doc.setDrawColor(37, 99, 235);
-      doc.setLineWidth(0.5);
-      doc.line((width / 2) - 40, 112, (width / 2) + 40, 112);
-
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(16);
-      doc.setTextColor(100, 116, 139);
-      doc.text('For successfully completing the course', width / 2, 130, { align: 'center' });
-
-     fitCenteredText(doc, `"${courseTitle}"`, 145, {
-        maxWidth: width - 90,
-        initialFontSize: 22,
-       minFontSize: 14,
-        fontName: 'helvetica',
-        fontStyle: 'bold',
-        color: [37, 99, 235]
-     });
-
-      const date = formatCertificateDate();
-     const bottomY = height - 40;
-
-     doc.setFont('helvetica', 'normal');
-      doc.setFontSize(12);
-      doc.setTextColor(30, 41, 59);
-      doc.text(`Date: ${date}`, 50, bottomY + 5, { align: 'center' });
-      doc.setLineWidth(0.5);
-     doc.setDrawColor(30, 41, 59);
-      doc.line(30, bottomY, 70, bottomY);
-
-      doc.setFont('times', 'italic');
-      doc.setFontSize(16);
-      doc.text('Bicmas Director', width - 50, bottomY - 5, { align: 'center' });
-
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(12);
-      doc.text('Program Director', width - 50, bottomY + 5, { align: 'center' });
-      doc.line(width - 70, bottomY, width - 30, bottomY);
-
-      doc.setFillColor(241, 245, 249);
-      doc.setDrawColor(37, 99, 235);
-      doc.circle(width / 2, bottomY, 12, 'FD');
-      doc.setFontSize(20);
-      doc.setTextColor(37, 99, 235);
-      doc.setFont('helvetica', 'bold');
-      doc.text('B', width / 2, bottomY + 2.5, { align: 'center' });
-
-     doc.save(`${sanitizeFileName(courseTitle)}_Certificate.pdf`);
-      return true;
-   } catch (error) {
-      console.error('PDF Generation failed', error);
-      return false;
-    }
-  };
-
   const completeSuccess = () => {
-   setStatus('success');
+    setStatus('success');
     setErrorMessage('');
 
-   closeTimeoutRef.current = window.setTimeout(() => {
+    closeTimeoutRef.current = window.setTimeout(() => {
       resetState();
       onConfirm();
-   }, 2000);
+    }, 2000);
   };
 
   const handleDownload = () => {
@@ -238,26 +102,44 @@ certificateUrl
     setStatus('processing');
     setErrorMessage('');
 
-   processingTimeoutRef.current = window.setTimeout(() => {
-      let wasSuccessful = false;
+   processingTimeoutRef.current = window.setTimeout(async () => {
+      try {
+        if (courseId) {
+          const blob = await downloadMyCourseCertificate(courseId);
+          saveCertificateBlob(
+            blob,
+            `${sanitizeFileName(courseTitle)}_Certificate.pdf`,
+          );
+          completeSuccess();
+          return;
+        }
 
-      if (certificateUrl && certificateUrl !== '#') {
-        const downloadWindow = window.open(certificateUrl, '_blank', 'noopener,noreferrer');
-        wasSuccessful = downloadWindow !== null;
-      } else {
-        wasSuccessful = generatePDF();
-    }
-
-     processingTimeoutRef.current = null;
-
-     if (wasSuccessful) {
+      if (certificateUrl && certificateUrl.startsWith('http')) {
+        const response = await fetch(certificateUrl);
+        if (!response.ok) {
+          throw new Error('Failed to fetch certificate file');
+        }
+        const blob = await response.blob();
+        saveCertificateBlob(
+          blob,
+          `${sanitizeFileName(courseTitle)}_Certificate.pdf`,
+        );
         completeSuccess();
         return;
       }
 
-     setStatus('error');
-      setErrorMessage('We could not generate your certificate right now. Please try again.');
-    }, 1500);
+      throw new Error('Certificate is not available yet.');
+      } catch (error) {
+        setStatus('error');
+        setErrorMessage(
+          error instanceof Error
+            ? error.message
+            : 'We could not download your certificate right now. Please try again.',
+        );
+      } finally {
+        processingTimeoutRef.current = null;
+      }
+    }, 300);
   };
 
  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
@@ -303,7 +185,7 @@ certificateUrl
                 ? 'bg-green-50 text-green-600 ring-green-50/50'
                : isError
                  ? 'bg-red-50 text-red-600 ring-red-50/50'
-                 : 'bg-blue-50 text-blue-600 ring-blue-50/50'
+                 : 'bg-brand-primary/10 text-brand-primary ring-brand-primary/10'
            }`}
          >
             {isProcessing ? (
@@ -347,7 +229,7 @@ certificateUrl
               <button
                type="button"
                 onClick={handleDownload}
-               className="w-full bg-blue-600 text-white py-3.5 rounded-xl font-semibold hover:bg-blue-700 transition-all hover:shadow-lg hover:shadow-blue-200 flex items-center justify-center gap-2 active:scale-[0.98]"
+               className="w-full bg-brand-primary text-white py-3.5 rounded-xl font-semibold hover:bg-brand-primary-dark transition-all hover:shadow-lg hover:shadow-brand-primary/20 flex items-center justify-center gap-2 active:scale-[0.98]"
               >
                {isError ? 'Try Again' : 'Confirm Download'}
               </button>

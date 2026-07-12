@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">BICMAS Academy</string>
-    <string name="title_activity_main">BICMAS Academy</string>
+    <string name="app_name">Prime Impact</string>
+    <string name="title_activity_main">Prime Impact</string>
     <string name="package_name">com.bicmas.academy</string>
     <string name="custom_url_scheme">com.bicmas.academy</string>
 </resources>

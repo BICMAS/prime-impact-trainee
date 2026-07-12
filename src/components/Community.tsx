@@ -126,7 +126,7 @@ export const Community: React.FC<CommunityProps> = ({ user }) => {
             </button>
             <div>
               <div className="flex items-center gap-2">
-                 <span className="bg-indigo-50 text-indigo-600 text-[10px] font-bold px-2 py-0.5 rounded uppercase">{selectedThread.category}</span>
+                 <span className="bg-brand-primary/10 text-brand-primary text-[10px] font-bold px-2 py-0.5 rounded uppercase">{selectedThread.category}</span>
                  <span className="text-xs text-slate-400">{selectedThread.timestamp}</span>
               </div>
               <h2 className="font-bold text-slate-800 line-clamp-1">{selectedThread.title}</h2>
@@ -144,8 +144,8 @@ export const Community: React.FC<CommunityProps> = ({ user }) => {
                   </div>
                   <p className="text-slate-700 leading-relaxed">{selectedThread.content}</p>
                   <div className="flex gap-4 pt-2">
-                     <button className="flex items-center gap-1 text-slate-500 hover:text-blue-600 text-sm"><ThumbsUp size={16} /> {selectedThread.likes}</button>
-                     <button className="flex items-center gap-1 text-slate-500 hover:text-blue-600 text-sm"><MessageSquare size={16} /> Reply</button>
+                     <button className="flex items-center gap-1 text-slate-500 hover:text-brand-primary text-sm"><ThumbsUp size={16} /> {selectedThread.likes}</button>
+                     <button className="flex items-center gap-1 text-slate-500 hover:text-brand-primary text-sm"><MessageSquare size={16} /> Reply</button>
                   </div>
                </div>
              </div>
@@ -171,8 +171,8 @@ export const Community: React.FC<CommunityProps> = ({ user }) => {
 
           <div className="p-4 border-t border-slate-100 bg-slate-50 rounded-b-2xl">
             <div className="flex gap-2">
-              <input type="text" placeholder="Write a reply..." className="flex-1 border border-slate-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none" />
-              <button className="bg-blue-600 text-white p-2 rounded-xl hover:bg-blue-700"><Send size={20} /></button>
+              <input type="text" placeholder="Write a reply..." className="flex-1 border border-slate-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-brand-primary outline-none" />
+              <button className="bg-brand-primary text-white p-2 rounded-xl hover:bg-brand-primary-dark"><Send size={20} /></button>
             </div>
           </div>
         </div>
@@ -187,12 +187,12 @@ export const Community: React.FC<CommunityProps> = ({ user }) => {
              <input 
                type="text" 
                placeholder="Search discussions..." 
-               className="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500" 
+               className="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-primary" 
              />
            </div>
            <button 
              onClick={() => setShowNewTopicModal(true)}
-             className="bg-[#008080]/80 hover:bg-[#008080] text-white px-4 py-2 rounded-xl text-sm font-medium flex items-center gap-2"
+             className="bg-brand-primary/80 hover:bg-brand-primary text-white px-4 py-2 rounded-xl text-sm font-medium flex items-center gap-2"
            >
              <Plus size={18} /> New Topic
            </button>
@@ -217,17 +217,17 @@ export const Community: React.FC<CommunityProps> = ({ user }) => {
              <div 
                key={thread.id} 
                onClick={() => setSelectedThread(thread)}
-               className="bg-white p-5 rounded-2xl border border-slate-200 hover:border-[#008080]/20 hover:shadow-md transition-all cursor-pointer group"
+               className="bg-white p-5 rounded-2xl border border-slate-200 hover:border-brand-primary/20 hover:shadow-md transition-all cursor-pointer group"
              >
                 <div className="flex justify-between items-start mb-2">
                    <div className="flex items-center gap-2">
                       <img src={thread.author.avatar} alt="" className="w-8 h-8 rounded-full" />
                       <div>
-                        <span className="block text-sm font-semibold text-slate-900 group-hover:text-[#008080] transition-colors">{thread.title}</span>
+                        <span className="block text-sm font-semibold text-slate-900 group-hover:text-brand-primary transition-colors">{thread.title}</span>
                         <span className="text-xs text-slate-500">{thread.author.name} • {thread.timestamp}</span>
                       </div>
                    </div>
-                   {thread.isPinned && <Pin size={16} className="text-[#008080] fill-current rotate-45" />}
+                   {thread.isPinned && <Pin size={16} className="text-brand-primary fill-current rotate-45" />}
                 </div>
                 
                 <p className="text-slate-600 text-sm line-clamp-2 mb-3 pl-10">
@@ -277,7 +277,7 @@ export const Community: React.FC<CommunityProps> = ({ user }) => {
             <div className="p-4 border-b border-slate-100 bg-slate-50/50">
                <div className="relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-                  <input type="text" placeholder="Search contacts..." className="w-full pl-9 pr-4 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                  <input type="text" placeholder="Search contacts..." className="w-full pl-9 pr-4 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-primary" />
                </div>
             </div>
             <div className="flex-1 overflow-y-auto">
@@ -285,7 +285,7 @@ export const Community: React.FC<CommunityProps> = ({ user }) => {
                  <button 
                    key={contact.id}
                    onClick={() => setActiveContactId(contact.id)}
-                   className={`w-full p-4 flex items-center gap-3 hover:bg-slate-50 transition-colors border-b border-slate-50 ${activeContactId === contact.id ? 'bg-blue-50 hover:bg-blue-50' : ''}`}
+                   className={`w-full p-4 flex items-center gap-3 hover:bg-slate-50 transition-colors border-b border-slate-50 ${activeContactId === contact.id ? 'bg-brand-primary/5 hover:bg-brand-primary/5' : ''}`}
                  >
                     <div className="relative">
                        <img src={contact.avatar} alt="" className="w-10 h-10 rounded-full" />
@@ -295,7 +295,7 @@ export const Community: React.FC<CommunityProps> = ({ user }) => {
                     </div>
                     <div className="flex-1 text-left min-w-0">
                        <div className="flex justify-between items-baseline mb-0.5">
-                          <span className={`text-sm font-semibold truncate ${activeContactId === contact.id ? 'text-blue-900' : 'text-slate-900'}`}>{contact.name}</span>
+                          <span className={`text-sm font-semibold truncate ${activeContactId === contact.id ? 'text-brand-primary' : 'text-slate-900'}`}>{contact.name}</span>
                           <span className="text-[10px] text-slate-400 shrink-0">{contact.lastMessageTime}</span>
                        </div>
                        <p className={`text-xs truncate ${contact.unread > 0 ? 'font-bold text-slate-800' : 'text-slate-500'}`}>
@@ -303,7 +303,7 @@ export const Community: React.FC<CommunityProps> = ({ user }) => {
                        </p>
                     </div>
                     {contact.unread > 0 && (
-                      <div className="w-5 h-5 bg-blue-600 rounded-full text-white text-[10px] flex items-center justify-center font-bold">
+                      <div className="w-5 h-5 bg-brand-primary rounded-full text-white text-[10px] flex items-center justify-center font-bold">
                         {contact.unread}
                       </div>
                     )}
@@ -342,11 +342,11 @@ export const Community: React.FC<CommunityProps> = ({ user }) => {
                        <div key={msg.id} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
                           <div className={`max-w-[70%] px-4 py-2 rounded-2xl shadow-sm text-sm ${
                             isMe 
-                            ? 'bg-blue-600 text-white rounded-br-none' 
+                            ? 'bg-brand-primary text-white rounded-br-none' 
                             : 'bg-white text-slate-800 border border-slate-200 rounded-bl-none'
                           }`}>
                              {msg.text}
-                             <div className={`text-[10px] mt-1 text-right ${isMe ? 'text-blue-100' : 'text-slate-400'}`}>
+                             <div className={`text-[10px] mt-1 text-right ${isMe ? 'text-purple-100' : 'text-slate-400'}`}>
                                {msg.timestamp}
                              </div>
                           </div>
@@ -360,10 +360,10 @@ export const Community: React.FC<CommunityProps> = ({ user }) => {
                      <input 
                        value={messageInput}
                        onChange={(e) => setMessageInput(e.target.value)}
-                       className="flex-1 bg-slate-100 border-0 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all outline-none"
+                       className="flex-1 bg-slate-100 border-0 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-brand-primary focus:bg-white transition-all outline-none"
                        placeholder="Type a message..."
                      />
-                     <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-xl transition-colors">
+                     <button type="submit" className="bg-brand-primary hover:bg-brand-primary-dark text-white p-3 rounded-xl transition-colors">
                        <Send size={20} />
                      </button>
                    </div>
@@ -439,7 +439,7 @@ export const Community: React.FC<CommunityProps> = ({ user }) => {
                       value={newTopicTitle}
                       onChange={(e) => setNewTopicTitle(e.target.value)}
                       placeholder="What's on your mind?"
-                      className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                      className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-primary outline-none transition-all"
                       required
                     />
                  </div>
@@ -451,7 +451,7 @@ export const Community: React.FC<CommunityProps> = ({ user }) => {
                       <select 
                         value={newTopicCategory}
                         onChange={(e) => setNewTopicCategory(e.target.value)}
-                        className="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all bg-white appearance-none"
+                        className="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-primary outline-none transition-all bg-white appearance-none"
                       >
                          <option>General</option>
                          <option>Course Help</option>
@@ -467,7 +467,7 @@ export const Community: React.FC<CommunityProps> = ({ user }) => {
                       value={newTopicContent}
                       onChange={(e) => setNewTopicContent(e.target.value)}
                       placeholder="Share your thoughts, questions, or insights..."
-                      className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all min-h-[120px]"
+                      className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-primary outline-none transition-all min-h-[120px]"
                       required
                     />
                  </div>
@@ -482,7 +482,7 @@ export const Community: React.FC<CommunityProps> = ({ user }) => {
                     </button>
                     <button 
                       type="submit" 
-                      className="flex-1 py-2.5 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 shadow-sm shadow-blue-200"
+                      className="flex-1 py-2.5 bg-brand-accent text-white rounded-xl font-medium hover:bg-brand-accent-dark shadow-sm"
                     >
                       Post Discussion
                     </button>

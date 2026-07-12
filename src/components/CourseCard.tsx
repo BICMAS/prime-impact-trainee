@@ -90,8 +90,8 @@ export const CourseCard: React.FC<CourseCardProps> = ({
     },
     [CourseStatus.InProgress]: {
       label: "In progress",
-      badge: "bg-blue-100 text-blue-700",
-      bar: "bg-blue-500",
+      badge: "bg-brand-primary/10 text-brand-primary",
+      bar: "bg-brand-primary",
     },
     [CourseStatus.Completed]: {
       label: "Completed",
@@ -232,7 +232,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({
               className={`text-sm font-medium ${
                 isDisabled
                   ? "cursor-not-allowed text-slate-400"
-                  : "text-blue-600 hover:text-blue-700"
+                  : "text-brand-primary hover:text-brand-primary-dark"
               }`}
             >
               {buttonLabel}
@@ -247,7 +247,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({
               {isCompleted && onViewCertificate && (
                 <button
                   onClick={() => onViewCertificate(course.id)}
-                  className="text-xs font-medium text-blue-600 hover:text-blue-700"
+                  className="text-xs font-medium text-brand-primary hover:text-brand-primary-dark"
                   title="Download Certificate"
                 >
                   Certificate

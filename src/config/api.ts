@@ -3,13 +3,17 @@
  * Override via Vite env at build time (see .env.example).
  */
 
-const DEFAULT_API_V1 =
-  "https://bicmas-academy-main-backend-production.up.railway.app/api/v1";
+const DEV_API_V1 = "http://localhost:5000/api/v1";
+
+/** Set `VITE_API_BASE_URL` in production when the backend is deployed. */
+const PRODUCTION_API_V1_PENDING =
+  "https://your-production-backend.example.com/api/v1";
 
 export function getApiV1BaseUrl(): string {
   const v = import.meta.env.VITE_API_BASE_URL?.trim();
   if (v) return v.replace(/\/$/, "");
-  return DEFAULT_API_V1;
+  if (import.meta.env.DEV) return DEV_API_V1;
+  return PRODUCTION_API_V1_PENDING;
 }
 
 /**

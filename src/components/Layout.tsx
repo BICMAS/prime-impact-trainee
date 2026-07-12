@@ -70,7 +70,7 @@ const NAV_ITEMS: NavItemConfig[] = [
 ];
 
 const FALLBACK_AVATAR =
-  "https://ui-avatars.com/api/?name=User&background=0D8ABC&color=fff";
+  "https://ui-avatars.com/api/?name=User&background=4f1073&color=fff";
 
 type NavItemProps = {
   item: NavItemConfig;
@@ -88,7 +88,7 @@ const NavItem: React.FC<NavItemProps> = ({ item, isActive, onNavigate, mobile = 
       onClick={() => onNavigate(item.path)}
       className={`flex ${mobile ? "flex-col" : "flex-col"} items-center justify-center p-2 rounded-xl transition-all ${
         isActive
-          ? "text-[#008080] bg-[#008080]/10"
+          ? "text-brand-primary bg-brand-primary/10"
           : "text-slate-500 hover:text-slate-900 hover:bg-slate-100"
       }`}
       aria-current={isActive ? "page" : undefined}
@@ -129,7 +129,7 @@ export const Layout: React.FC = () => {
         <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-96 bg-slate-900 text-white rounded-xl shadow-lg p-4 flex items-center gap-3 z-50">
           <Download size={20} />
           <div className="flex-1">
-            <p className="font-semibold text-sm">Install BICMAS Academy</p>
+            <p className="font-semibold text-sm">Install Prime Impact</p>
             <p className="text-xs text-slate-300">
               Learn offline. Faster access. No browser needed.
             </p>
@@ -138,7 +138,7 @@ export const Layout: React.FC = () => {
           <button
             type="button"
             onClick={promptInstall}
-            className="bg-[#008080] hover:bg-[#004c4c] px-3 py-1.5 rounded-lg text-sm font-medium"
+            className="bg-brand-accent hover:bg-brand-accent-dark px-3 py-1.5 rounded-lg text-sm font-medium transition-colors"
           >
             Install
           </button>
@@ -155,8 +155,12 @@ export const Layout: React.FC = () => {
       )}
 
       <aside className="hidden md:flex w-24 bg-white border-r border-slate-200 flex-col items-center py-6 shrink-0 fixed h-full z-10">
-        <div className="w-12 h-12 flex items-center justify-center mb-8">
-          <img src="/img/BICMAS-logo.png" alt="BICMAS Academy" />
+        <div className="w-full px-2 mb-8 flex items-center justify-center">
+          <img
+            src="/img/prime-impact-logo.png"
+            alt="Prime Impact"
+            className="max-h-12 w-auto object-contain"
+          />
         </div>
 
         <nav className="flex-1 flex flex-col gap-6 w-full px-2">
@@ -176,7 +180,7 @@ export const Layout: React.FC = () => {
             className={`w-10 h-10 rounded-full flex items-center justify-center ${
               isOffline
                 ? "bg-orange-100 text-orange-600"
-                : "bg-slate-100 text-green-600"
+                : "bg-brand-accent/10 text-brand-accent"
             }`}
             title={isOffline ? "You are offline" : "You are online"}
           >
@@ -205,7 +209,7 @@ export const Layout: React.FC = () => {
               className={`p-2 rounded-full ${
                 isOffline
                   ? "bg-orange-100 text-orange-600"
-                  : "bg-green-50 text-green-600"
+                  : "bg-brand-accent/10 text-brand-accent"
               }`}
               title={isOffline ? "You are offline" : "You are online"}
             >
@@ -230,7 +234,7 @@ export const Layout: React.FC = () => {
                 Offline Mode
               </div>
             ) : (
-              <div className="text-xs text-green-700 font-medium px-3 py-1 bg-green-50 rounded-full border border-green-100">
+              <div className="text-xs text-brand-accent font-medium px-3 py-1 bg-brand-accent/10 rounded-full border border-brand-accent/20">
                 Online
               </div>
             )}

@@ -47,7 +47,8 @@ export const useAttemptSync = () => {
     if (pct >= 100 || status === "COMPLETED") {
       try {
         const claimed = await claimMyCourseCertificate(courseId);
-        const certificateUrl = claimed?.certificate?.pdfPath;
+        const certificateUrl =
+          claimed?.certificate?.certificateUrl ?? claimed?.certificate?.pdfPath;
 
         if (certificateUrl) {
           queryClient.setQueriesData({ queryKey: ["dashboard"] }, (old: any) => {

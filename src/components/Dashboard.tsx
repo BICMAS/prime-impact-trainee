@@ -31,6 +31,7 @@ import {
 import { useAnnouncementNotifications } from "../hooks/useAnnouncementNotifications";
 import { getAnnouncements } from "@/services/announcementService";
 import { getAccessToken } from "@/utils/auth";
+import { getApiV1BaseUrl } from "@/config/api";
 import {
   getLastWebPushFailureReason,
   getNotificationPermission,
@@ -68,8 +69,7 @@ interface Announcement {
   };
 }
 
-const API_BASE =
-  "https://bicmas-academy-main-backend-production.up.railway.app/api/v1";
+const API_BASE = getApiV1BaseUrl();
 
 export const Dashboard: React.FC<DashboardProps> = ({
   courses,
@@ -170,7 +170,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
           <span
             className={`text-xs font-semibold px-2 py-1 rounded-full flex items-center gap-1 ${
               trendDirection === "up"
-                ? "text-[#008080] bg-[#008080]/10"
+                ? "text-brand-primary bg-brand-primary/10"
                 : "text-red-600 bg-red-50"
             }`}
           >
@@ -211,8 +211,8 @@ export const Dashboard: React.FC<DashboardProps> = ({
     return (
       <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm h-full flex flex-col">
         <div className="flex justify-between items-center mb-6">
-          <h3 className="font-bold text-xl text-[#008080]/70 flex items-center gap-2">
-            <Clock size={20} className="text-[#008080]" />
+          <h3 className="font-bold text-xl text-brand-primary/70 flex items-center gap-2">
+            <Clock size={20} className="text-brand-primary" />
             Learning Activity
           </h3>
           <span className="text-xs text-slate-400">Last 7 Days</span>
@@ -225,7 +225,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
             >
               <div className="w-full relative h-32 bg-slate-50 rounded-lg overflow-hidden flex items-end">
                 <div
-                  className="w-full bg-[#008080]/70 hover:bg-[#008080] transition-all duration-500 rounded-t-lg"
+                  className="w-full bg-brand-primary/70 hover:bg-brand-primary transition-all duration-500 rounded-t-lg"
                   style={{
                     height: `${(val / maxVal) * 100}%`,
                     opacity: val === 0 ? 0 : 1,
@@ -236,7 +236,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                   {val}m
                 </div>
               </div>
-              <span className="text-xs font-medium text-slate-400 group-hover:text-[#008080]">
+              <span className="text-xs font-medium text-slate-400 group-hover:text-brand-primary">
                 {days[i]}
               </span>
             </div>
@@ -251,10 +251,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
       <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden h-full flex flex-col">
         <div className="p-6 border-b border-slate-50 bg-slate-50/50">
           <div className="flex justify-between items-start mb-2">
-            <div className="flex text-xl items-center gap-2 text-[#008080] font-semibold uppercase tracking-wide">
+            <div className="flex text-xl items-center gap-2 text-brand-primary font-semibold uppercase tracking-wide">
               <Map size={20} /> Learning Path
             </div>
-            <div className="bg-indigo-100 text-indigo-700 text-xs font-bold px-2 py-1 rounded-md">
+            <div className="bg-brand-primary/10 text-brand-primary text-xs font-bold px-2 py-1 rounded-md">
               {path.progress}%
             </div>
           </div>
@@ -285,7 +285,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                         <CheckCircle2 size={20} />
                       </div>
                     ) : isCurrent ? (
-                      <div className="w-10 h-10 rounded-full bg-[#008080] text-white flex items-center justify-center border-4 border-[#008080]/2 shadow-md ring-2 ring-[#008080]/50 ring-offset-2">
+                      <div className="w-10 h-10 rounded-full bg-brand-primary text-white flex items-center justify-center border-4 border-brand-primary/20 shadow-md ring-2 ring-brand-primary/50 ring-offset-2">
                         <PlayCircle
                           size={20}
                           fill="currentColor"
@@ -300,7 +300,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                   </div>
 
                   <div
-                    className={`flex-1 rounded-xl p-4 border transition-all ${isCurrent ? "bg-[#008080]/10 border-[#008080]/2 shadow-sm" : "bg-white border-[#008080]/2"}`}
+                    className={`flex-1 rounded-xl p-4 border transition-all ${isCurrent ? "bg-brand-primary/10 border-brand-primary/20 shadow-sm" : "bg-white border-slate-100"}`}
                   >
                     <div className="flex justify-between items-start">
                       <div>
@@ -308,7 +308,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                           STEP {idx + 1} • {step.type.toUpperCase()}
                         </div>
                         <h4
-                          className={`font-bold ${isCurrent ? "text-[#008080]" : "text-slate-800"}`}
+                          className={`font-bold ${isCurrent ? "text-brand-primary" : "text-slate-800"}`}
                         >
                           {step.title}
                         </h4>
@@ -317,7 +317,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                         </p>
                       </div>
                       {step.estimatedTime && (
-                        <span className="text-xs text-slate-400 bg-white px-2 py-1 rounded border border-[#008080]/2 whitespace-nowrap">
+                        <span className="text-xs text-slate-400 bg-white px-2 py-1 rounded border border-slate-100 whitespace-nowrap">
                           {step.estimatedTime}
                         </span>
                       )}
@@ -326,7 +326,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                     {isCurrent && step.courseId && (
                       <button
                         onClick={() => onStartCourse(step.courseId!)}
-                        className="mt-4 w-full bg-[#008080] hover:bg-indigo-700 text-white py-2 rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-2"
+                        className="mt-4 w-full bg-brand-accent hover:bg-brand-accent-dark text-white py-2 rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-2"
                       >
                         Continue Journey <MoreHorizontal size={16} />
                       </button>
@@ -366,7 +366,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
             <Award size={18} className="text-yellow-500" />
             Achievements
           </h3>
-          <span className="text-xs font-medium text-blue-600 hover:underline cursor-pointer">
+          <span className="text-xs font-medium text-brand-primary hover:underline cursor-pointer">
             View All
           </span>
         </div>
@@ -409,13 +409,13 @@ export const Dashboard: React.FC<DashboardProps> = ({
             <h1 className="text-3xl font-bold text-slate-900">Dashboard</h1>
             <p className="text-slate-500 mt-1">
               Hi{" "}
-              <span className="font-semibold text-green-500">{user.name}</span>,
-              welcome back. Let's get some BICMAS coins!
+              <span className="font-semibold text-brand-accent">{user.name}</span>,
+              welcome back. Let's earn some Impact coins!
             </p>
           </div>
           <div className="hidden md:block text-right">
             <div className="text-sm text-slate-500">Current Focus</div>
-            <div className="font-semibold text-[#008080]">
+            <div className="font-semibold text-brand-primary">
               {learningPath?.title || "Van Sales Rep Certification"}
             </div>
           </div>
@@ -424,7 +424,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
         <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 rounded-2xl border border-slate-100 bg-white p-4 shadow-sm">
           <div>
             <div className="flex items-center gap-2 text-slate-900 font-semibold">
-              <BellRing size={18} className="text-[#008080]" />
+              <BellRing size={18} className="text-brand-primary" />
               Stay updated with announcements
             </div>
             <p className="text-sm text-slate-500 mt-1">
@@ -439,7 +439,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
             type="button"
             onClick={handleEnableNotifications}
             disabled={notificationsEnabled || isEnablingNotifications}
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#008080] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#006d6d] disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-500"
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-brand-accent px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-accent-dark disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-500"
           >
             <Bell size={16} />
             {notificationsEnabled
@@ -452,10 +452,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <InsightCard
-            label="BICMAS Coins"
+            label="Impact Coins"
             value={stats.bicmasCoins}
             icon={Coins}
-            color={{ bg: "bg-yellow-500", text: "text-white" }}
+            color={{ bg: "bg-brand-accent", text: "text-white" }}
             trend="Rewards"
             trendDirection="up"
           />
@@ -463,7 +463,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
             label="Learning Hours"
             value={formatLearningTime(stats.totalLearningHours)}
             icon={Clock}
-            color={{ bg: "bg-blue-500", text: "text-white" }}
+            color={{ bg: "bg-brand-primary", text: "text-white" }}
             trend="+2.5h"
             trendDirection="up"
           />
@@ -471,7 +471,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
             label="Courses Done"
             value={stats.completedCourses}
             icon={Award}
-            color={{ bg: "bg-purple-500", text: "text-white" }}
+            color={{ bg: "bg-brand-primary-light", text: "text-white" }}
             trend={`${stats.completedCoursesTrend > 0 ? "+" : ""}${stats.completedCoursesTrend}`}
             trendDirection={stats.completedCoursesTrend >= 0 ? "up" : "down"}
           />
@@ -506,7 +506,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
           </div>
 
           <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
-  <h3 className="font-bold text-[#008080] mb-4 flex items-center gap-2">
+  <h3 className="font-bold text-brand-primary mb-4 flex items-center gap-2">
     <Bell /> Announcements
   </h3>
 
@@ -555,7 +555,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 <h3 className="text-xl font-bold text-slate-800">
                   Jump Back In
                 </h3>
-                <button className="text-blue-600 text-sm font-medium hover:underline">
+                <button className="text-brand-primary text-sm font-medium hover:underline">
                   View Library
                 </button>
               </div>

@@ -338,7 +338,7 @@ export const ScormPlayer: React.FC<ScormPlayerProps> = ({
 
             <button
               onClick={onViewCertificate}
-              className="bg-blue-600 text-white px-6 py-3 rounded flex items-center gap-2 disabled:cursor-not-allowed disabled:bg-blue-400"
+              className="bg-brand-primary text-white px-6 py-3 rounded flex items-center gap-2 disabled:cursor-not-allowed disabled:bg-brand-primary/60"
               disabled={isCompletionSyncing}
             >
               <Download size={18} />
