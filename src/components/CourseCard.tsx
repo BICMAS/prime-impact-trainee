@@ -220,10 +220,19 @@ export const CourseCard: React.FC<CourseCardProps> = ({
 
           <div className="flex justify-between text-xs text-slate-500">
             <span>{normalizedProgress}% Complete</span>
-            {course.deadline && (
+            {course.quizScore != null ? (
+              <span className="font-medium text-emerald-600">
+                Quiz: {course.quizScore}%
+              </span>
+            ) : course.deadline ? (
               <span>Due: {new Date(course.deadline).toLocaleDateString()}</span>
-            )}
+            ) : null}
           </div>
+          {course.quizScore != null && course.deadline && (
+            <div className="text-xs text-slate-500">
+              Due: {new Date(course.deadline).toLocaleDateString()}
+            </div>
+          )}
 
           <div className="flex items-center justify-between border-t border-slate-100 pt-3">
             <button

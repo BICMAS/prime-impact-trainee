@@ -9,9 +9,15 @@ const DEV_API_V1 = "http://localhost:5000/api/v1";
 const PRODUCTION_API_V1_PENDING =
   "https://your-production-backend.example.com/api/v1";
 
+function normalizeApiV1BaseUrl(raw: string): string {
+  const trimmed = raw.replace(/\/$/, "");
+  if (trimmed.endsWith("/api/v1")) return trimmed;
+  return `${trimmed}/api/v1`;
+}
+
 export function getApiV1BaseUrl(): string {
   const v = import.meta.env.VITE_API_BASE_URL?.trim();
-  if (v) return v.replace(/\/$/, "");
+  if (v) return normalizeApiV1BaseUrl(v);
   if (import.meta.env.DEV) return DEV_API_V1;
   return PRODUCTION_API_V1_PENDING;
 }

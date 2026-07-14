@@ -76,6 +76,23 @@ function normalizeProgressValue(value?: number | null) {
   return Math.min(100, Math.max(0, Math.round(percent)));
 }
 
+function resolveScorePercent(item: any): number | null {
+  if (item?.scorePercent != null && Number.isFinite(Number(item.scorePercent))) {
+    return Math.min(100, Math.max(0, Math.round(Number(item.scorePercent))));
+  }
+  const raw = item?.cloudScore?.raw ?? item?.score;
+  const max = item?.cloudScore?.max ?? 100;
+  const scaled = item?.scormCloudScoreScaled ?? item?.cloudScore?.scaled;
+  if (raw != null && Number.isFinite(Number(raw)) && max > 0) {
+    return Math.min(100, Math.max(0, Math.round((Number(raw) / max) * 100)));
+  }
+  if (scaled != null && Number.isFinite(Number(scaled))) {
+    const normalized = Number(scaled);
+    return Math.min(100, Math.max(0, Math.round(normalized <= 1 ? normalized * 100 : normalized)));
+  }
+  return null;
+}
+
 
 /**
  * Fetch dashboard and map backend → UI-friendly shape
@@ -113,18 +130,22 @@ export async function fetchLearnerDashboard(): Promise<LearnerDashboardViewModel
     {
       completionPercentage: number;
       scaledScore: number | null;
+      scorePercent: number | null;
       totalSeconds: number;
     }
   >();
   const scormCourseMap = new Map<string, number>();
+  const scormCourseScoreMap = new Map<string, number>();
 
   scormData.forEach((item: any) => {
+    const scorePercent = resolveScorePercent(item);
     if (item?.scormPackageId) {
       scormMap.set(item.scormPackageId, {
         completionPercentage: normalizeProgressValue(
           item.completionPercentage ?? item.scormCloudCompletion ?? 0,
         ),
         scaledScore: item.scormCloudScoreScaled ?? null,
+        scorePercent,
         totalSeconds: item.cloudScore?.totalSecondsTracked ?? 0,
       });
     }
@@ -134,6 +155,9 @@ export async function fetchLearnerDashboard(): Promise<LearnerDashboardViewModel
         item.courseId,
         normalizeProgressValue(item.completionPercentage ?? item.scormCloudCompletion ?? 0),
       );
+      if (scorePercent != null) {
+        scormCourseScoreMap.set(item.courseId, scorePercent);
+      }
     }
   });
 
@@ -219,6 +243,9 @@ export async function fetchLearnerDashboard(): Promise<LearnerDashboardViewModel
     const progressFromScormPackage = scormPackageId
       ? scormMap.get(scormPackageId)?.completionPercentage ?? 0
       : 0;
+    const quizScore = scormPackageId
+      ? scormMap.get(scormPackageId)?.scorePercent ?? scormCourseScoreMap.get(course?.id ?? "") ?? null
+      : scormCourseScoreMap.get(course?.id ?? "") ?? null;
     const progressFromScormCourseId = course?.id
       ? scormCourseMap.get(course.id) ?? 0
       : 0;
@@ -274,6 +301,7 @@ export async function fetchLearnerDashboard(): Promise<LearnerDashboardViewModel
       dueDate: assignment.dueDate,
       scormPackageId,
       progress,
+      quizScore,
       status: deriveStatus(progress, rawStatus),
       totalModules,
       completedModules,
@@ -293,19 +321,13 @@ export async function fetchLearnerDashboard(): Promise<LearnerDashboardViewModel
 
   const totalLearningHours = totalSeconds / 3600;
 
-  const scoredItems = scormData.filter(
-    (item: any) => item.scormCloudScoreScaled != null
-  );
+  const scoredItems = scormData
+    .map((item: any) => resolveScorePercent(item))
+    .filter((value): value is number => value != null);
 
   const averageScore =
     scoredItems.length > 0
-      ? Math.round(
-          scoredItems.reduce(
-            (sum: number, item: any) =>
-              sum + (item.scormCloudScoreScaled ?? 0),
-            0
-          ) / scoredItems.length
-        )
+      ? Math.round(scoredItems.reduce((sum, value) => sum + value, 0) / scoredItems.length)
       : raw.averageScore ?? 0;
 
   const activity = raw.learningActivity || {};

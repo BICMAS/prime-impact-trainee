@@ -47,8 +47,8 @@ export function mapAssignedCourse(assignment: any): Course {
       0,
   );
   const rawStatus =
-    assignment.attempt?.status ??
     assignment.status ??
+    assignment.attempt?.status ??
     assignment.progressStatus ??
     assignment.scormStatus;
   const progress = Math.max(

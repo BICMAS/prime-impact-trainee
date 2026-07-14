@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Course,
   CourseStatus,
@@ -39,6 +39,7 @@ import {
   hasEnabledNotifications,
   registerPushNotifications,
 } from "@/utils/pushService";
+import { fetchLeaderboard, type LeaderboardEntry } from "@/api/scores";
 
 interface DashboardProps {
   courses: Course[];
@@ -90,6 +91,24 @@ export const Dashboard: React.FC<DashboardProps> = ({
   );
   const [notificationStatus, setNotificationStatus] = React.useState("");
   const [isEnablingNotifications, setIsEnablingNotifications] = React.useState(false);
+  const [leaderboardMetric, setLeaderboardMetric] = useState<"score" | "points">("score");
+  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
+  const [leaderboardEnabled, setLeaderboardEnabled] = useState(true);
+
+  useEffect(() => {
+    const loadLeaderboard = async () => {
+      try {
+        const data = await fetchLeaderboard(leaderboardMetric, 5);
+        setLeaderboardEnabled(data.enabled);
+        setLeaderboard(data.entries);
+      } catch (error) {
+        console.error("Failed to load leaderboard", error);
+        setLeaderboard([]);
+      }
+    };
+
+    loadLeaderboard();
+  }, [leaderboardMetric]);
 
   useEffect(() => {
     const fetchAnnouncements = async () => {
@@ -532,6 +551,74 @@ export const Dashboard: React.FC<DashboardProps> = ({
     )}
   </div>
 </div>
+
+          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <h3 className="font-bold text-brand-primary flex items-center gap-2">
+                <Trophy size={18} /> Leaderboard
+              </h3>
+              <div className="flex rounded-lg border border-slate-200 p-1 text-xs">
+                <button
+                  type="button"
+                  onClick={() => setLeaderboardMetric("score")}
+                  className={`rounded px-2 py-1 ${
+                    leaderboardMetric === "score"
+                      ? "bg-brand-primary text-white"
+                      : "text-slate-600"
+                  }`}
+                >
+                  Quiz Score
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setLeaderboardMetric("points")}
+                  className={`rounded px-2 py-1 ${
+                    leaderboardMetric === "points"
+                      ? "bg-brand-primary text-white"
+                      : "text-slate-600"
+                  }`}
+                >
+                  Coins
+                </button>
+              </div>
+            </div>
+
+            {!leaderboardEnabled ? (
+              <p className="text-sm text-slate-500">Leaderboard is currently disabled.</p>
+            ) : leaderboard.length === 0 ? (
+              <p className="text-sm text-slate-500">No leaderboard data yet.</p>
+            ) : (
+              <div className="space-y-3">
+                {leaderboard.map((entry) => (
+                  <div
+                    key={entry.id}
+                    className="flex items-center justify-between rounded-lg border border-slate-100 bg-slate-50 px-3 py-2"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span
+                        className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${
+                          entry.rank === 1
+                            ? "bg-yellow-100 text-yellow-700"
+                            : entry.rank === 2
+                              ? "bg-slate-200 text-slate-700"
+                              : "bg-orange-100 text-orange-700"
+                        }`}
+                      >
+                        {entry.rank}
+                      </span>
+                      <div>
+                        <p className="text-sm font-medium text-slate-800">{entry.name}</p>
+                        {entry.department && (
+                          <p className="text-xs text-slate-500">{entry.department}</p>
+                        )}
+                      </div>
+                    </div>
+                    <span className="text-sm font-bold text-slate-800">{entry.label}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
 
           {/*
             Mini "Next Up" (Recommended) card intentionally hidden.

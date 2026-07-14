@@ -30,6 +30,7 @@ export interface Course {
   modules: PlayerModule[];
   certificateUrl?: string;
   scormPackageId?: string;
+  quizScore?: number | null;
 }
 
 export interface User {
