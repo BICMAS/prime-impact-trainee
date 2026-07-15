@@ -4,11 +4,22 @@ import { fetchWithAuthRetry } from "@/utils/fetchWithAuthRetry";
 
 const BASE_URL = getApiV1BaseUrl();
 
-type AttemptStatus = "IN_PROGRESS" | "COMPLETED";
+type AttemptStatus = "IN_PROGRESS" | "COMPLETED" | "FAILED" | "PASSED";
 
 interface SyncAttemptPayload {
   completionPercentage: number;
   status: AttemptStatus;
+}
+
+export interface SyncedAttemptResult {
+  attemptId: string;
+  scormPackageId?: string;
+  completionPercentage: number;
+  status: AttemptStatus;
+  scorePercent?: number | null;
+  passingScore?: number;
+  passed?: boolean;
+  requiresRetake?: boolean;
 }
 
 /**
@@ -31,7 +42,6 @@ const authFetch = async (url: string, options: RequestInit = {}) => {
     headers
   })
 
-  // Read response body once as text, then parse individually
   let text: string;
   try {
     text = await res.text();
@@ -63,7 +73,6 @@ const authFetch = async (url: string, options: RequestInit = {}) => {
   }
 
   if (parseError) {
-    // Success status but unparseable JSON is unexpected
     throw new Error(`Unexpected non-JSON success response from ${url} (${res.status}): ${text}`);
   }
 
@@ -104,11 +113,22 @@ export const syncScormProgress = async (attemptId: string) => {
 };
 
 /**
+ * Reset a failed course attempt and get a fresh SCORM launch URL.
+ */
+export const retakeCourse = async (courseId: string) => {
+  const res = await authFetch(`${BASE_URL}/attempts/courses/${courseId}/retake`, {
+    method: "POST",
+  });
+
+  return res?.data ?? res;
+};
+
+/**
  * Smart sync:
  * 1. Pull SCORM progress
  * 2. Update local attempt if backend returns percentage
  */
-export const syncCourseAttempt = async (attemptId: string) => {
+export const syncCourseAttempt = async (attemptId: string): Promise<SyncedAttemptResult> => {
   const res = await syncScormProgress(attemptId);
 
   if (!res?.data) {
@@ -116,7 +136,6 @@ export const syncCourseAttempt = async (attemptId: string) => {
     throw new Error("No attempt data returned from sync");
   }
 
-  // Validate that attemptId is present before constructing normalized object
   const computedAttemptId = res.data.attemptId || res.data.attempt?.id;
   if (!computedAttemptId) {
     console.error("[SCORM SYNC] Missing attemptId in response", {data: res.data});
@@ -124,7 +143,10 @@ export const syncCourseAttempt = async (attemptId: string) => {
   }
 
   const isAttemptStatus = (value: any): value is AttemptStatus =>
-    value === "IN_PROGRESS" || value === "COMPLETED";
+    value === "IN_PROGRESS"
+    || value === "COMPLETED"
+    || value === "FAILED"
+    || value === "PASSED";
 
   const rawStatus = res.data.status;
   const status: AttemptStatus = isAttemptStatus(rawStatus)
@@ -137,16 +159,14 @@ export const syncCourseAttempt = async (attemptId: string) => {
     );
   }
 
-  const normalized = {
-    // Backend authoritative identity
+  return {
     attemptId: computedAttemptId,
-
-    // Use top-level package id (not nested attempt one)
     scormPackageId: res.data.scormPackageId,
-
     completionPercentage: res.data.completionPercentage ?? 0,
     status,
+    scorePercent: res.data.scorePercent ?? null,
+    passingScore: res.data.passingScore,
+    passed: res.data.passed,
+    requiresRetake: res.data.requiresRetake,
   };
-
-  return normalized;
 };

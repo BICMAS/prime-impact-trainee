@@ -195,6 +195,7 @@ export async function fetchLearnerDashboard(): Promise<LearnerDashboardViewModel
   };
 
   const deriveStatus = (progress: number, rawStatus?: string | null): CourseStatus => {
+    if (rawStatus === "FAILED") return CourseStatus.Failed;
     if (progress >= 100) return CourseStatus.Completed;
     if (progress > 0) return CourseStatus.InProgress;
     if (rawStatus === "COMPLETED") return CourseStatus.Completed;

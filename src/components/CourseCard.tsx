@@ -35,18 +35,18 @@ const normalizeStatus = (
   rawStatus: any,
   progress: number,
   startedLocally: boolean,
+  requiresRetake?: boolean,
 ): CourseStatus => {
-  // Progress is the strongest signal
+  if (requiresRetake || rawStatus === "FAILED") return CourseStatus.Failed;
   if (progress >= 100) return CourseStatus.Completed;
   if (progress > 0) return CourseStatus.InProgress;
 
-  // Backend strings
   if (rawStatus === "COMPLETED") return CourseStatus.Completed;
   if (rawStatus === "IN_PROGRESS") return CourseStatus.InProgress;
 
-  // Frontend enum values
   if (rawStatus === CourseStatus.Completed) return CourseStatus.Completed;
   if (rawStatus === CourseStatus.InProgress) return CourseStatus.InProgress;
+  if (rawStatus === CourseStatus.Failed) return CourseStatus.Failed;
   if (rawStatus === CourseStatus.NotStarted) return CourseStatus.NotStarted;
   if (startedLocally) return CourseStatus.InProgress;
 
@@ -71,9 +71,15 @@ export const CourseCard: React.FC<CourseCardProps> = ({
   );
 
   const startedLocally = hasCourseBeenStartedLocally(course.id);
-  const safeStatus = normalizeStatus(status, normalizedProgress, startedLocally);
+  const safeStatus = normalizeStatus(
+    status,
+    normalizedProgress,
+    startedLocally,
+    course.requiresRetake,
+  );
 
   const isCompleted = safeStatus === CourseStatus.Completed;
+  const isFailed = safeStatus === CourseStatus.Failed;
   const isDisabled = isOfflineMode && !course.isDownloaded;
 
   // ----------------------------
@@ -97,6 +103,11 @@ export const CourseCard: React.FC<CourseCardProps> = ({
       label: "Completed",
       badge: "bg-green-100 text-green-700",
       bar: "bg-green-500",
+    },
+    [CourseStatus.Failed]: {
+      label: "Retake required",
+      badge: "bg-red-100 text-red-700",
+      bar: "bg-red-500",
     },
   };
 
@@ -122,9 +133,11 @@ export const CourseCard: React.FC<CourseCardProps> = ({
   const buttonLabel =
     safeStatus === CourseStatus.Completed
       ? "Completed"
-      : safeStatus === CourseStatus.InProgress
-        ? "Resume"
-        : "Start Course";
+      : safeStatus === CourseStatus.Failed
+        ? "Retake Course"
+        : safeStatus === CourseStatus.InProgress
+          ? "Resume"
+          : "Start Course";
 
   const handleDownload = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -183,6 +196,12 @@ export const CourseCard: React.FC<CourseCardProps> = ({
             MANDATORY
           </span>
         )}
+
+          {isFailed && (
+            <span className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded shadow-sm">
+              RETAKE
+            </span>
+          )}
       </div>
 
       {/* Content */}

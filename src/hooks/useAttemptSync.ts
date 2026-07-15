@@ -3,8 +3,10 @@ import { syncCourseAttempt } from "@/api/attempts";
 import { claimMyCourseCertificate } from "@/api/certificates";
 import { CourseStatus } from "@/types";
 
-const mapStatus = (status: string, pct: number): CourseStatus => {
-  if (pct >= 100 || status === "COMPLETED") return CourseStatus.Completed;
+const mapStatus = (status: string, pct: number, requiresRetake?: boolean): CourseStatus => {
+  if (requiresRetake || status === "FAILED") return CourseStatus.Failed;
+  if (status === "COMPLETED" || status === "PASSED") return CourseStatus.Completed;
+  if (pct >= 100) return CourseStatus.Completed;
   if (pct > 0 || status === "IN_PROGRESS") return CourseStatus.InProgress;
   return CourseStatus.NotStarted;
 };
@@ -23,8 +25,9 @@ export const useAttemptSync = () => {
 
     const pct = normalizeProgress(data.completionPercentage ?? 0);
     const status = data.status;
+    const passed = data.passed ?? (status === "COMPLETED" || status === "PASSED");
+    const requiresRetake = Boolean(data.requiresRetake || status === "FAILED");
 
-    // Update dashboard cache immediately (single source of truth)
     queryClient.setQueriesData({ queryKey: ["dashboard"] }, (old: any) => {
       if (!old?.courses) return old;
 
@@ -35,16 +38,17 @@ export const useAttemptSync = () => {
 
           return {
             ...course,
-            progress: pct,
-            status: mapStatus(status, pct),
+            progress: requiresRetake ? pct : Math.max(pct, course.progress ?? 0),
+            status: mapStatus(status, pct, requiresRetake),
+            quizScore: data.scorePercent ?? course.quizScore ?? null,
+            passingScore: data.passingScore ?? course.passingScore,
+            requiresRetake,
           };
         }),
       };
     });
 
-    // ❗ Do NOT invalidate immediately
-    // Backend may still be stale
-    if (pct >= 100 || status === "COMPLETED") {
+    if (passed && !requiresRetake) {
       try {
         const claimed = await claimMyCourseCertificate(courseId);
         const certificateUrl =
@@ -75,6 +79,11 @@ export const useAttemptSync = () => {
         queryClient.invalidateQueries({ queryKey: ["dashboard"] });
         queryClient.invalidateQueries({ queryKey: ["assignedCourses"] });
       }, 1500);
+    } else if (requiresRetake) {
+      setTimeout(() => {
+        queryClient.invalidateQueries({ queryKey: ["dashboard"] });
+        queryClient.invalidateQueries({ queryKey: ["assignedCourses"] });
+      }, 500);
     }
 
     return data;

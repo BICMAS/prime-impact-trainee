@@ -10,8 +10,10 @@ function deriveStatus(
   progress: number,
   rawStatus?: string | null,
   hasAttempt?: boolean,
+  requiresRetake?: boolean,
 ): CourseStatus {
-  if (progress >= 100) return CourseStatus.Completed;
+  if (requiresRetake || rawStatus === "FAILED") return CourseStatus.Failed;
+  if (progress >= 100 && rawStatus !== "FAILED") return CourseStatus.Completed;
   if (progress > 0) return CourseStatus.InProgress;
   if (rawStatus === "COMPLETED") return CourseStatus.Completed;
   if (rawStatus === "IN_PROGRESS") return CourseStatus.InProgress;
@@ -84,7 +86,12 @@ export function mapAssignedCourse(assignment: any): Course {
     thumbnail: course.imageUrl ?? null,
 
     category: "Mandatory",
-    status: deriveStatus(progress, rawStatus, hasAttempt),
+    status: deriveStatus(
+      progress,
+      rawStatus,
+      hasAttempt,
+      assignment.requiresRetake,
+    ),
     progress,
 
     totalModules,
@@ -92,6 +99,16 @@ export function mapAssignedCourse(assignment: any): Course {
 
     deadline: assignment.dueDate,
     isDownloaded: false,
+    passingScore: assignment.passingScore ?? assignment.course?.passingScore ?? 70,
+    requiresRetake: Boolean(assignment.requiresRetake),
+    modulePacingEnabled: Boolean(course.modulePacingEnabled),
+    pacingStartDate: course.pacingStartDate ?? null,
+    modulePacingDays: course.modulePacingDays ?? 7,
+    assignmentId: assignment.id ?? assignment.assignmentId ?? null,
+    quizScore:
+      assignment.scorePercent ??
+      assignment.quizScore ??
+      null,
 
     modules: modules.map((m: any) => ({
       id: m.id,

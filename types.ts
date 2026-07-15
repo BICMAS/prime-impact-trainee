@@ -2,7 +2,8 @@
 export enum CourseStatus {
   NotStarted = 'Not Started',
   InProgress = 'In Progress',
-  Completed = 'Completed'
+  Completed = 'Completed',
+  Failed = 'Failed',
 }
 
 export interface ScormModule {
@@ -31,6 +32,12 @@ export interface Course {
   certificateUrl?: string;
   scormPackageId?: string;
   quizScore?: number | null;
+  passingScore?: number;
+  requiresRetake?: boolean;
+  modulePacingEnabled?: boolean;
+  pacingStartDate?: string | null;
+  modulePacingDays?: number;
+  assignmentId?: string;
 }
 
 export interface User {

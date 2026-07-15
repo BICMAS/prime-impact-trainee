@@ -23,7 +23,8 @@ const deriveStatus = (progress: number): CourseStatus => {
 const statusRank: Record<CourseStatus, number> = {
   [CourseStatus.NotStarted]: 0,
   [CourseStatus.InProgress]: 1,
-  [CourseStatus.Completed]: 2,
+  [CourseStatus.Failed]: 2,
+  [CourseStatus.Completed]: 3,
 };
 
 const pickMostAdvancedStatus = (
@@ -123,7 +124,9 @@ export const useLibrary = (dashboardCourses: Course[] = []) => {
         const status = pickMostAdvancedStatus(
           course.status,
           match?.status,
-          deriveStatus(progress),
+          course.requiresRetake || match?.requiresRetake
+            ? CourseStatus.Failed
+            : deriveStatus(progress),
         );
 
         const quizScore =
